@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Socios</title>
+</head>
+<body>
+    <h1>Socios de la Biblioteca</h1>
+    <h2>Crear nuevo socio</h2>
+
+    <form id="form-socio">
+        <laber for="dni"> DNI:</laber>
+        <!--El required es la validacion basica del navegador:
+        no te deja enviar el formulario si ese campo quedo vacio
+        -->
+        <input type="text" id="dni" required>
+
+        <label for="nombre">Nombre</label>
+        <input type="text" id="nombre" required>
+        
+        <laber for="edad"> Edad:</laber>
+        <input type="text" id="edad" required>
+
+        <label for="direccion">Direccion</label>
+        <input type="text" id="direccion" required>
+
+        <label for="telefono">Telefono</label>
+        <input type="text" id="nroTelefono" required>
+
+        <button type="submit" > Crear Socio</button>
+
+    </form>
+
+    <div id="lista-socios"> Socios</div>
+    <script>
+        fetch("http://localhost:7070/socios")
+            .then(respuesta => respuesta.json())
+            .then(datos => {
+                const contenedor = document.getElementById("lista-socios");
+                contenedor.innerHTML = "";
+
+                //Recorre el array de socios que me devolvio la API
+                datos.forEach(socio => {
+                    //Crea un elemento <p> no visible en la pagina
+                    const parrafo = document.createElement("p");
+                    //Guardo el texto adentro
+                    parrafo.textContent = socio.nombre + " - DNI: " + socio.dni;
+                    //Recien se agrega el <p> y se hace visible en la pagina
+                    contenedor.appendChild(parrafo);
+                });
+            });
+
+            //Utilizo el <form> de arriba llamandolo con el id que le puse
+            //document.getElementById("form-socio").
+            //Basicamente cuando pase el evento submit ejecuta la funcion.
+            //addEventListener("submit", function(evento) {
+                //Esto es para frenar el comportamiento por defecto de los formularios de html
+            //    evento.preventDefault();
+            //    console.log("¡Se envió el formulario!");
+            //});
+
+            document.getElementById("form-socio").addEventListener("submit", function(evento) {
+            evento.preventDefault();
+
+            const nuevoSocio = {
+                // El .value te da lo que el usuario haya escrito en string
+                dni: document.getElementById("dni").value,
+                nombre: document.getElementById("nombre").value,
+                edad: Number(document.getElementById("edad").value),
+                direccion: document.getElementById("direccion").value,
+                nroTelefono: document.getElementById("nroTelefono").value
+            };
+
+            fetch("http://localhost:7070/socios", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(nuevoSocio)
+                })
+                .then(respuesta => respuesta.json())
+                    .then(datos => {
+                        console.log("Socio creado:", datos);
+                    });
+            });
+    </script>
+</body>
+</html>

@@ -54,7 +54,7 @@ public class ApiServer {
 
             String dni = (String) datos.get("dni");
             String nombre = (String) datos.get("nombre");
-            int edad = (int) (double) datos.get("edad");
+            int edad = ((Number) datos.get("edad")).intValue();
             String direccion = (String) datos.get("direccion");
             String nroTelefono = (String) datos.get("nroTelefono");
 
