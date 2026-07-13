@@ -29,23 +29,25 @@
             <label for="telefono">Telefono</label>
             <input type="text" id="nroTelefono" required>
 
+            <div id="mensaje-error"></div>
             <button type="submit" > Crear Socio</button>
         </form>
         <div id="lista-socios"> Socios</div>
     </div>
 
     <script>
+    function cargarSocios() {
         fetch("http://localhost:7070/socios")
             .then(respuesta => respuesta.json())
             .then(datos => {
                 const contenedor = document.getElementById("lista-socios");
                 contenedor.innerHTML = "";
 
-                
                 datos.forEach(socio => {
                     const tarjeta = document.createElement("div");
                     tarjeta.className = "socio-card";
                     const inicial = socio.nombre.charAt(0).toUpperCase();
+
                     tarjeta.innerHTML = `
                         <div class="avatar">${inicial}</div>
                         <div class="socio-info">
@@ -58,41 +60,40 @@
                     `;
                     contenedor.appendChild(tarjeta);
                 });
-            });
+            })
+        ;}
 
-            //Utilizo el <form> de arriba llamandolo con el id que le puse
-            //document.getElementById("form-socio").
-            //Basicamente cuando pase el evento submit ejecuta la funcion.
-            //addEventListener("submit", function(evento) {
-                //Esto es para frenar el comportamiento por defecto de los formularios de html
-            //    evento.preventDefault();
-            //    console.log("¡Se envió el formulario!");
-            //});
+        cargarSocios();
 
-            document.getElementById("form-socio").addEventListener("submit", function(evento) {
+        document.getElementById("form-socio").addEventListener("submit", function(evento) {
             evento.preventDefault();
-
             const nuevoSocio = {
-                // El .value te da lo que el usuario haya escrito en string
                 dni: document.getElementById("dni").value,
                 nombre: document.getElementById("nombre").value,
                 edad: Number(document.getElementById("edad").value),
                 direccion: document.getElementById("direccion").value,
                 nroTelefono: document.getElementById("nroTelefono").value
             };
-
             fetch("http://localhost:7070/socios", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify(nuevoSocio)
-                })
-                .then(respuesta => respuesta.json())
-                    .then(datos => {
-                        console.log("Socio creado:", datos);
-                    });
-            });
+            })
+                .then(respuesta => respuesta.json().then(datos => ({ ok: respuesta.ok, datos })))
+                .then(resultado => {
+                    const mensajeError = document.getElementById("mensaje-error");
+                    if (resultado.ok) {
+                        console.log("Socio creado:", resultado.datos);
+                        mensajeError.textContent = "";
+                        evento.target.reset();
+                        cargarSocios();
+                    } else {
+                        mensajeError.textContent = resultado.datos.error;
+                    }
+                }); 
+        }); 
     </script>
 </body>
 </html>

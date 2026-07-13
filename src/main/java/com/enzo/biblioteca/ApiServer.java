@@ -9,6 +9,7 @@ import org.bson.Document;
 
 
 import com.enzo.biblioteca.db.ConexionMongo;
+import com.enzo.biblioteca.modelo.Socio;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
@@ -52,26 +53,37 @@ public class ApiServer {
         app.post("/socios", ctx -> {
             Map<String, Object> datos = ctx.bodyAsClass(Map.class);
 
-            String dni = (String) datos.get("dni");
-            String nombre = (String) datos.get("nombre");
-            int edad = ((Number) datos.get("edad")).intValue();
-            String direccion = (String) datos.get("direccion");
-            String nroTelefono = (String) datos.get("nroTelefono");
+            try {
+                String dni = (String) datos.get("dni");
+                String nombre = (String) datos.get("nombre");
+                int edad = ((Number) datos.get("edad")).intValue();
+                String direccion = (String) datos.get("direccion");
+                String nroTelefono = (String) datos.get("nroTelefono");
 
-            MongoDatabase db = ConexionMongo.obtenerBaseDeDatos();
-            MongoCollection<Document> coleccion = db.getCollection("socios");
+                Socio socio = new Socio(nombre, edad, dni, direccion, nroTelefono);
 
-            Document nuevoSocio = new Document("dni", dni)
-                    .append("nombre", nombre)
-                    .append("edad", edad)
-                    .append("direccion", direccion)
-                    .append("nroTelefono", nroTelefono)
-                    .append("deuda", 0);
+                MongoDatabase db = ConexionMongo.obtenerBaseDeDatos();
+                MongoCollection<Document> coleccion = db.getCollection("socios");
 
-            coleccion.insertOne(nuevoSocio);
+                Document doc = new Document("dni", socio.getDni())
+                        .append("nombre", socio.getNombre())
+                        .append("edad", socio.getEdad())
+                        .append("direccion", socio.getDireccion())
+                        .append("nroTelefono", socio.getNroTelefono())
+                        .append("deuda", socio.getDeuda());
 
-            ctx.status(201);
-            ctx.json(nuevoSocio);
+                coleccion.insertOne(doc);
+
+                ctx.status(201);
+                ctx.json(doc);
+
+            } catch (com.mongodb.MongoWriteException e) {
+                ctx.status(409);
+                ctx.json(Map.of("error", "Ya existe un socio con ese DNI."));
+            } catch (IllegalArgumentException e) {
+                ctx.status(400);//codigo de pedido mal formado, basicamente se le informa al cliente que mando algo mal.
+                ctx.json(Map.of("error", e.getMessage()));
+            }
         });
 
         System.out.println("Servidor corriendo en http://localhost:7070");

@@ -1,8 +1,13 @@
 package com.enzo.biblioteca.db;
 
+import org.bson.Document;
+
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.IndexOptions;
+import com.mongodb.client.model.Indexes;
 
 public class ConexionMongo {
 
@@ -23,9 +28,15 @@ public class ConexionMongo {
             }
 
             cliente = MongoClients.create(uri);
+            crearIndicesUnicos(cliente.getDatabase(NOMBRE_BASE_DATOS));
         }
 
         return cliente.getDatabase(NOMBRE_BASE_DATOS);
+    }
+
+    private static void crearIndicesUnicos(MongoDatabase db) {
+        MongoCollection<Document> socios = db.getCollection("socios");
+        socios.createIndex(Indexes.ascending("dni"), new IndexOptions().unique(true));
     }
 
     public static void cerrarConexion() {
