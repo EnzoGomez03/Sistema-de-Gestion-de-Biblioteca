@@ -3,36 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
     <title>Panel de Socios</title>
 </head>
 <body>
-    <h1>Socios de la Biblioteca</h1>
-    <h2>Crear nuevo socio</h2>
+    <div class="contenedor-principal">
+        <h1>Socios de la Biblioteca</h1>
+        <h2>Crear nuevo socio</h2>
+        <form id="form-socio">
+            <laber for="dni"> DNI:</laber>
+            <!--El required es la validacion basica del navegador:
+            no te deja enviar el formulario si ese campo quedo vacio
+            -->
+            <input type="text" id="dni" required>
 
-    <form id="form-socio">
-        <laber for="dni"> DNI:</laber>
-        <!--El required es la validacion basica del navegador:
-        no te deja enviar el formulario si ese campo quedo vacio
-        -->
-        <input type="text" id="dni" required>
+            <label for="nombre">Nombre</label>
+            <input type="text" id="nombre" required>
+            
+            <laber for="edad"> Edad:</laber>
+            <input type="text" id="edad" required>
 
-        <label for="nombre">Nombre</label>
-        <input type="text" id="nombre" required>
-        
-        <laber for="edad"> Edad:</laber>
-        <input type="text" id="edad" required>
+            <label for="direccion">Direccion</label>
+            <input type="text" id="direccion" required>
 
-        <label for="direccion">Direccion</label>
-        <input type="text" id="direccion" required>
+            <label for="telefono">Telefono</label>
+            <input type="text" id="nroTelefono" required>
 
-        <label for="telefono">Telefono</label>
-        <input type="text" id="nroTelefono" required>
+            <button type="submit" > Crear Socio</button>
+        </form>
+        <div id="lista-socios"> Socios</div>
+    </div>
 
-        <button type="submit" > Crear Socio</button>
-
-    </form>
-
-    <div id="lista-socios"> Socios</div>
     <script>
         fetch("http://localhost:7070/socios")
             .then(respuesta => respuesta.json())
@@ -40,14 +41,18 @@
                 const contenedor = document.getElementById("lista-socios");
                 contenedor.innerHTML = "";
 
-                //Recorre el array de socios que me devolvio la API
+                
                 datos.forEach(socio => {
-                    //Crea un elemento <p> no visible en la pagina
-                    const parrafo = document.createElement("p");
-                    //Guardo el texto adentro
-                    parrafo.textContent = socio.nombre + " - DNI: " + socio.dni;
-                    //Recien se agrega el <p> y se hace visible en la pagina
-                    contenedor.appendChild(parrafo);
+                    const tarjeta = document.createElement("div");
+                    tarjeta.className = "socio-card";
+                    tarjeta.innerHTML = `
+                        <strong>${socio.nombre}</strong>
+                        <span>DNI: ${socio.dni}</span>
+                        <span>Edad: ${socio.edad}</span>
+                        <span>Tel: ${socio.nroTelefono}</span>
+                        <span>Deuda: $${socio.deuda}</span>
+                    `;
+                    contenedor.appendChild(tarjeta);
                 });
             });
 
