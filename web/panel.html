@@ -45,12 +45,16 @@
                 datos.forEach(socio => {
                     const tarjeta = document.createElement("div");
                     tarjeta.className = "socio-card";
+                    const inicial = socio.nombre.charAt(0).toUpperCase();
                     tarjeta.innerHTML = `
-                        <strong>${socio.nombre}</strong>
-                        <span>DNI: ${socio.dni}</span>
-                        <span>Edad: ${socio.edad}</span>
-                        <span>Tel: ${socio.nroTelefono}</span>
-                        <span>Deuda: $${socio.deuda}</span>
+                        <div class="avatar">${inicial}</div>
+                        <div class="socio-info">
+                            <strong>${socio.nombre}</strong>
+                            <span>DNI: ${socio.dni}</span>
+                            <span>Edad: ${socio.edad}</span>
+                            <span>Tel: ${socio.nroTelefono}</span>
+                            <span>Deuda: $${socio.deuda}</span>
+                        </div>
                     `;
                     contenedor.appendChild(tarjeta);
                 });

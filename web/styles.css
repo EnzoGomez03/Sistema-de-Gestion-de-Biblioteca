@@ -26,15 +26,24 @@ body {
 
 .socio-card {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 4px;
+    align-items: center;
     background: white;
     padding: 16px 20px;
     border-radius: 8px;
     max-width: 400px;
     margin-bottom: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.50);
+    transition: transform 0.15s, box-shadow 0.15s;
 }
+
+
+.socio-card:hover {
+    transform: translateY(-3px);/*Efecto de que la tarjeta se levanta*/
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.60);/*Esto es para que la sombra de la card se refuerce al momento de que esta se levante*/
+}
+
 
 .socio-card strong {
     font-size: 16px;
@@ -44,11 +53,35 @@ body {
 .socio-card span {
     font-size: 14px;
     color: #555;
+    margin-bottom: 16px;
+}
+
+.avatar {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    border-radius: 50%;
+    background-color: #2563eb;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 40%;
+}
+
+.socio-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-left: 40px;
 }
 
 .contenedor-principal {
     max-width: 500px;
     margin: 0 auto;
+    padding-top: 20px;
 }
 
 button {
@@ -96,4 +129,8 @@ h2 {
     margin-top: 20px;
     margin-left: 21%;
     
+}
+
+#lista-socios {
+    margin-top: 80px;
 }
